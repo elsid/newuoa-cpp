@@ -1,12 +1,13 @@
 cmake_minimum_required (VERSION 2.6)
 project (newuoa)
 set (CMAKE_C_FLAGS "-Wall -lm -O3 -g")
+set (CMAKE_CPP_FLAGS "-Wall -lm -O3 -g")
 include_directories (include)
-add_library (newuoa_static STATIC src/newuoa.c include/newuoa.h)
+add_library (newuoa_static STATIC src/newuoa.cpp include/newuoa.h)
 set_target_properties (newuoa_static PROPERTIES
     OUTPUT_NAME newuoa
     ARCHIVE_OUTPUT_DIRECTORY lib)
-add_library (newuoa_shared SHARED src/newuoa.c include/newuoa.h)
+add_library (newuoa_shared SHARED src/newuoa.cpp include/newuoa.h)
 set_target_properties (newuoa_shared PROPERTIES
     OUTPUT_NAME newuoa
     LIBRARY_OUTPUT_DIRECTORY lib)

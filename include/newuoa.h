@@ -24,8 +24,16 @@ typedef double (*Function)(long n, const double *x);
  * The array W will be used for working space. Its length must be at least
  * (NPT+13)*(NPT+N)+3*N*(N+3)/2. */
 
-extern double newuoa(const Function function, long n, long npt, double *x,
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+double newuoa(const Function function, long n, long npt, double *x,
     double rhobeg, double rhoend, long maxfun, double *w);
+
+#ifdef __cplusplus
+}
+#endif
 
 #define NEWUOA_WORKING_SPACE_SIZE(n, npt) \
     (npt + 13)*(npt + n) + 3*n*(n + 3)/2
