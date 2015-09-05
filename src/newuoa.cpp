@@ -1703,3 +1703,10 @@ double newuoa_closure(NewuoaClosure *closure, long n, long npt, double *x,
             return closure->function(closure->data, n, x);
         }, n, npt, x, rhobeg, rhoend, maxfun, w);
 }
+
+double newuoa_closure_const(NewuoaClosureConst *closure, long n, long npt,
+        double *x, double rhobeg, double rhoend, long maxfun, double *w) {
+    return newuoa_impl([=] (long n, const double *x) -> double {
+            return closure->function(closure->data, n, x);
+        }, n, npt, x, rhobeg, rhoend, maxfun, w);
+}
