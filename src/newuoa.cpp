@@ -36,15 +36,16 @@
    SOFTWARE.
 */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 
 #include <newuoa.h>
 
+template <class Function>
 static void biglag(long n, long npt, double *xopt, double *xpt, double *bmat, double *zmat,
                    long *idz, long *ndim, long *knew, double *delta, double *d__, double *alpha,
-                   double *hcol, double *gc, double *gd, double *s, double *w, Function function) {
+                   double *hcol, double *gc, double *gd, double *s, double *w, const Function& function) {
     /* N is the number of variables. NPT is the number of interpolation
      * equations. XOPT is the best interpolation point so far. XPT
      * contains the coordinates of the current interpolation
@@ -976,12 +977,13 @@ static void update(long n, long npt, double *bmat, double *zmat, long *idz, long
     return;
 }
 
+template <class Function>
 static double newuob(long n, long npt, double *x,
                      double rhobeg, double rhoend, long maxfun,
                      double *xbase, double *xopt, double *xnew,
                      double *xpt, double *fval, double *gq, double *hq,
                      double *pq, double *bmat, double *zmat, long *ndim,
-                     double *d__, double *vlag, double *w, Function function) {
+                     double *d__, double *vlag, double *w, const Function& function) {
     /* XBASE will hold a shift of origin that should reduce the
        contributions from rounding errors to values of the model and
        Lagrange functions.
@@ -1617,7 +1619,8 @@ L530:
     return f;
 }
 
-double newuoa(const Function function, long n, long npt, double *x,
+template <class Function>
+static double newuoa_impl(const Function &function, long n, long npt, double *x,
               double rhobeg, double rhoend, long maxfun, double *w) {
     /* This subroutine seeks the least value of a function of many
      * variables, by a trust region method that forms quadratic models
@@ -1680,4 +1683,18 @@ double newuoa(const Function function, long n, long npt, double *x,
     return newuob(n, npt, &x[1], rhobeg, rhoend, maxfun, &w[ixb], &w[ixo], &w[ixn],
                    &w[ixp], &w[ifv], &w[igq], &w[ihq], &w[ipq], &w[ibmat], &w[izmat],
                    &ndim, &w[id], &w[ivl], &w[iw], function);
+}
+
+double newuoa(NewuoaFunction function, long n, long npt, double *x,
+        double rhobeg, double rhoend, long maxfun, double *w) {
+    return newuoa_impl([=] (long n, const double *x) -> double {
+            return function(n, x);
+        }, n, npt, x, rhobeg, rhoend, maxfun, w);
+}
+
+double newuoa_closure(NewuoaClosure *closure, long n, long npt, double *x,
+        double rhobeg, double rhoend, long maxfun, double *w) {
+    return newuoa_impl([=] (long n, const double *x) -> double {
+            return closure->function(closure->data, n, x);
+        }, n, npt, x, rhobeg, rhoend, maxfun, w);
 }

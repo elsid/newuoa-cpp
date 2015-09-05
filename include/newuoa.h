@@ -1,7 +1,13 @@
 #ifndef NEWUOA_H
 #define NEWUOA_H
 
-typedef double (*Function)(long n, const double *x);
+typedef double (*NewuoaFunction)(long n, const double *x);
+typedef double (*NewuoaClosureFunction)(void *data, long n, const double *x);
+
+typedef struct {
+    void *data;
+    NewuoaClosureFunction function;
+} NewuoaClosure;
 
 /* This subroutine seeks the least value of a function of many variables,
  * by a trust region method that forms quadratic models by interpolation.
@@ -28,7 +34,10 @@ typedef double (*Function)(long n, const double *x);
 extern "C" {
 #endif
 
-double newuoa(const Function function, long n, long npt, double *x,
+double newuoa(NewuoaFunction function, long n, long npt, double *x,
+    double rhobeg, double rhoend, long maxfun, double *w);
+
+double newuoa_closure(NewuoaClosure *closure, long n, long npt, double *x,
     double rhobeg, double rhoend, long maxfun, double *w);
 
 #ifdef __cplusplus
