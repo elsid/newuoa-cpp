@@ -42,10 +42,13 @@
 
 #include <newuoa.h>
 
+namespace {
+
 template <class Function>
-static void biglag(long n, long npt, double *xopt, double *xpt, double *bmat, double *zmat,
-                   long *idz, long *ndim, long *knew, double *delta, double *d__, double *alpha,
-                   double *hcol, double *gc, double *gd, double *s, double *w, const Function& function) {
+void biglag(long n, long npt, double *xopt, double *xpt, double *bmat,
+        double *zmat, long *idz, long *ndim, long *knew, double *delta,
+        double *d__, double *alpha, double *hcol, double *gc, double *gd,
+        double *s, double *w, const Function& function) {
     /* N is the number of variables. NPT is the number of interpolation
      * equations. XOPT is the best interpolation point so far. XPT
      * contains the coordinates of the current interpolation
@@ -241,9 +244,10 @@ static void biglag(long n, long npt, double *xopt, double *xpt, double *bmat, do
     }
 }
 
-static void bigden(long n, long npt, double *xopt, double *xpt, double *bmat, double *zmat,
-                   long *idz, long *ndim, long *kopt, long *knew, double *d__, double *w,
-                   double *vlag, double *beta, double *s, double *wvec, double *prod) {
+void bigden(long n, long npt, double *xopt, double *xpt, double *bmat,
+        double *zmat, long *idz, long *ndim, long *kopt, long *knew,
+        double *d__, double *w, double *vlag, double *beta, double *s,
+        double *wvec, double *prod) {
     /* N is the number of variables.
      * NPT is the number of interpolation equations.
      * XOPT is the best interpolation point so far.
@@ -618,9 +622,9 @@ BDL340:
     vlag[*kopt] += 1.0;
 }
 
-static void trsapp(long n, long npt, double * xopt, double * xpt, double * gq, double * hq,
-                   double * pq, double * delta, double * step, double * d__, double * g,
-                   double * hd, double * hs, double * crvmin) {
+void trsapp(long n, long npt, double * xopt, double * xpt, double * gq,
+        double * hq, double * pq, double * delta, double * step,
+        double * d__, double * g, double * hd, double * hs, double * crvmin) {
     /* The arguments NPT, XOPT, XPT, GQ, HQ and PQ have their usual
      * meanings, in order to define the current quadratic model Q.
      * DETRLTA is the trust region radius, and has to be positive. STEP
@@ -841,8 +845,8 @@ TRL170:
     goto TRL120;
 }
 
-static void update(long n, long npt, double *bmat, double *zmat, long *idz, long *ndim,
-                   double *vlag, double *beta, long *knew, double *w) {
+void update(long n, long npt, double *bmat, double *zmat, long *idz,
+        long *ndim, double *vlag, double *beta, long *knew, double *w) {
     /* The arrays BMAT and ZMAT with IDZ are updated, in order to shift
      * the interpolation point that has index KNEW. On entry, VLAG
      * contains the components of the vector Theta*Wcheck+e_b of the
@@ -978,12 +982,11 @@ static void update(long n, long npt, double *bmat, double *zmat, long *idz, long
 }
 
 template <class Function>
-static double newuob(long n, long npt, double *x,
-                     double rhobeg, double rhoend, long maxfun,
-                     double *xbase, double *xopt, double *xnew,
-                     double *xpt, double *fval, double *gq, double *hq,
-                     double *pq, double *bmat, double *zmat, long *ndim,
-                     double *d__, double *vlag, double *w, const Function& function) {
+double newuob(long n, long npt, double *x, double rhobeg, double rhoend,
+        long maxfun, double *xbase, double *xopt, double *xnew, double *xpt,
+        double *fval, double *gq, double *hq, double *pq, double *bmat,
+        double *zmat, long *ndim, double *d__, double *vlag, double *w,
+        const Function& function) {
     /* XBASE will hold a shift of origin that should reduce the
        contributions from rounding errors to values of the model and
        Lagrange functions.
@@ -1620,8 +1623,8 @@ L530:
 }
 
 template <class Function>
-static double newuoa_impl(const Function &function, long n, long npt, double *x,
-              double rhobeg, double rhoend, long maxfun, double *w) {
+double newuoa_impl(const Function &function, long n, long npt, double *x,
+        double rhobeg, double rhoend, long maxfun, double *w) {
     /* This subroutine seeks the least value of a function of many
      * variables, by a trust region method that forms quadratic models
      * by interpolation. There can be some freedom in the interpolation
@@ -1684,6 +1687,8 @@ static double newuoa_impl(const Function &function, long n, long npt, double *x,
                    &w[ixp], &w[ifv], &w[igq], &w[ihq], &w[ipq], &w[ibmat], &w[izmat],
                    &ndim, &w[id], &w[ivl], &w[iw], function);
 }
+
+} // namespace
 
 double newuoa(NewuoaFunction function, long n, long npt, double *x,
         double rhobeg, double rhoend, long maxfun, double *w) {
