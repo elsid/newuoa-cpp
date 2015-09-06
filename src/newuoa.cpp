@@ -42,6 +42,12 @@
 
 #include <newuoa.h>
 
+#ifdef DEBUG
+#define DEBUG_LOG(what) DEBUG_LOG(what)
+#else
+#define DEBUG_LOG(what)
+#endif
+
 namespace {
 
 template <class Function>
@@ -1365,7 +1371,7 @@ L290:
 L310:
     if (nf > nftest) {
         --nf;
-        fprintf(stderr, "++ Return from NEWUOA because CALFUN has been called MAXFUN times.\n");
+        DEBUG_LOG("Return from NEWUOA because CALFUN has been called MAXFUN times.\n");
         goto L530;
     }
     f = function(n, &x[1]);
@@ -1411,7 +1417,7 @@ L310:
     if (knew > 0) goto L410;
     /* Pick the next value of DELTA after a trust region step. */
     if (vquad >= 0) {
-        fprintf(stderr, "++ Return from NEWUOA because a trust region step has failed to reduce Q.\n");
+        DEBUG_LOG("Return from NEWUOA because a trust region step has failed to reduce Q.\n");
         goto L530;
     }
     ratio = (f - fsave) / vquad;
@@ -1662,7 +1668,7 @@ double newuoa_impl(const Function &function, long n, long npt, double *x,
     np = n + 1;
     nptm = npt - np;
     if (npt < n + 2 || npt > (n + 2) * np / 2) {
-        fprintf(stderr, "NEWUOA: npt is not in the required interval.\n");
+        DEBUG_LOG("NEWUOA: npt is not in the required interval.\n");
         return 0.0;
     }
     ndim = npt + n;
