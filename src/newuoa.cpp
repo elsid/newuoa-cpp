@@ -50,11 +50,10 @@
 
 namespace {
 
-template <class Function>
 void biglag(long n, long npt, double *xopt, double *xpt, double *bmat,
         double *zmat, long *idz, long *ndim, long *knew, double *delta,
         double *d__, double *alpha, double *hcol, double *gc, double *gd,
-        double *s, double *w, const Function& function) {
+        double *s, double *w) {
     /* N is the number of variables. NPT is the number of interpolation
      * equations. XOPT is the best interpolation point so far. XPT
      * contains the coordinates of the current interpolation
@@ -1294,7 +1293,7 @@ L120:
      * substantial cancellation in DENOM. */
     if (knew > 0) {
         biglag(n, npt, &xopt[1], &xpt[xpt_offset], &bmat[bmat_offset], &zmat[zmat_offset], &idz,
-                ndim, &knew, &dstep, &d__[1], &alpha, &vlag[1], &vlag[npt + 1], &w[1], &w[np], &w[np + n], function);
+                ndim, &knew, &dstep, &d__[1], &alpha, &vlag[1], &vlag[npt + 1], &w[1], &w[np], &w[np + n]);
     }
     /* Calculate VLAG and BETA for the current choice of D. The first
      * NPT components of W_check will be held in W. */
@@ -1629,8 +1628,7 @@ L530:
 }
 
 template <class Function>
-double newuoa_impl(const Function &function, long n, long npt, double *x,
-        double rhobeg, double rhoend, long maxfun, double *w) {
+double newuoa_impl(const Function &function, long n, long npt, double *x, double rhobeg, double rhoend, long maxfun, double *w) {
     /* This subroutine seeks the least value of a function of many
      * variables, by a trust region method that forms quadratic models
      * by interpolation. There can be some freedom in the interpolation
@@ -1698,21 +1696,24 @@ double newuoa_impl(const Function &function, long n, long npt, double *x,
 
 double newuoa(NewuoaFunction function, long n, long npt, double *x,
         double rhobeg, double rhoend, long maxfun, double *w) {
-    return newuoa_impl([=] (long n, const double *x) -> double {
-            return function(n, x);
-        }, n, npt, x, rhobeg, rhoend, maxfun, w);
+    const auto f = [&] (long n, const double *x) -> double {
+        return function(n, x);
+    };
+    return newuoa_impl(f, n, npt, x, rhobeg, rhoend, maxfun, w);
 }
 
 double newuoa_closure(NewuoaClosure *closure, long n, long npt, double *x,
         double rhobeg, double rhoend, long maxfun, double *w) {
-    return newuoa_impl([=] (long n, const double *x) -> double {
-            return closure->function(closure->data, n, x);
-        }, n, npt, x, rhobeg, rhoend, maxfun, w);
+    const auto f = [&] (long n, const double *x) -> double {
+        return closure->function(closure->data, n, x);
+    };
+    return newuoa_impl(f, n, npt, x, rhobeg, rhoend, maxfun, w);
 }
 
-double newuoa_closure_const(NewuoaClosureConst *closure, long n, long npt,
+double newuoa_closure_const(const NewuoaClosureConst *closure, long n, long npt,
         double *x, double rhobeg, double rhoend, long maxfun, double *w) {
-    return newuoa_impl([=] (long n, const double *x) -> double {
-            return closure->function(closure->data, n, x);
-        }, n, npt, x, rhobeg, rhoend, maxfun, w);
+    const auto f = [&] (long n, const double *x) -> double {
+        return closure->function(closure->data, n, x);
+    };
+    return newuoa_impl(f, n, npt, x, rhobeg, rhoend, maxfun, w);
 }

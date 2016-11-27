@@ -40,14 +40,38 @@ typedef struct {
 extern "C" {
 #endif
 
-double newuoa(NewuoaFunction function, long n, long npt, double *x,
-    double rhobeg, double rhoend, long maxfun, double *w);
+double newuoa(
+    NewuoaFunction function,
+    long n,
+    long npt,
+    double *x,
+    double rhobeg,
+    double rhoend,
+    long maxfun,
+    double *w
+);
 
-double newuoa_closure(NewuoaClosure *closure, long n, long npt, double *x,
-    double rhobeg, double rhoend, long maxfun, double *w);
+double newuoa_closure(
+    NewuoaClosure *closure,
+    long n,
+    long npt,
+    double *x,
+    double rhobeg,
+    double rhoend,
+    long maxfun,
+    double *w
+);
 
-double newuoa_closure_const(NewuoaClosureConst *closure, long n, long npt,
-    double *x, double rhobeg, double rhoend, long maxfun, double *w);
+double newuoa_closure_const(
+    const NewuoaClosureConst* closure,
+    long n,
+    long npt,
+    double *x,
+    double rhobeg,
+    double rhoend,
+    long maxfun,
+    double *w
+);
 
 #ifdef __cplusplus
 }
