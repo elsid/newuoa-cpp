@@ -94,7 +94,6 @@ void biglag(long n, long npt, double *xopt, double *xpt, double *bmat,
     nptm = npt - n - 1;
     /* Set the first NPT components of HCOBLL to the leading elements of
      * the KNEW-th column of H. */
-    iterc = 0;
     i__1 = npt;
     for (k = 1; k <= i__1; ++k) hcol[k] = 0;
     i__1 = nptm;
