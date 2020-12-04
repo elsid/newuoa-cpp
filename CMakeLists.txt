@@ -1,19 +1,15 @@
-cmake_minimum_required (VERSION 2.6)
-project (newuoa)
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -lm -O3 -g -fPIC")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -lm -O3 -g -std=c++11 -fPIC")
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
-include_directories (include)
-add_library (newuoa_static STATIC src/newuoa.cpp include/newuoa.h)
-set_target_properties (newuoa_static PROPERTIES OUTPUT_NAME newuoa)
-add_library (newuoa_shared SHARED src/newuoa.cpp include/newuoa.h)
-set_target_properties (newuoa_shared PROPERTIES OUTPUT_NAME newuoa)
-add_executable (example_function src/example_function.c include/newuoa.h)
-target_link_libraries (example_function newuoa_static)
-add_executable (example_closure src/example_closure.cpp include/newuoa.h)
-target_link_libraries (example_closure newuoa_static)
-install(TARGETS newuoa_static ARCHIVE DESTINATION lib)
-install(TARGETS newuoa_shared LIBRARY DESTINATION lib)
-install(FILES include/newuoa.h DESTINATION include)
+cmake_minimum_required (VERSION 3.9)
+project (newuoa VERSION 0.1.0 DESCRIPTION "libnewuoa")
+include(GNUInstallDirs)
+add_library(newuoa SHARED src/newuoa.cpp)
+set_target_properties(newuoa PROPERTIES
+	VERSION ${PROJECT_VERSION}
+	SOVERSION 0
+	PUBLIC_HEADER include/newuoa.h)
+configure_file(newuoa.pc.in newuoa.pc @ONLY)
+target_include_directories(newuoa PRIVATE include)
+install(TARGETS newuoa
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${CMAKE_BINARY_DIR}/newuoa.pc
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
