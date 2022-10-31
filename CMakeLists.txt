@@ -23,13 +23,6 @@ target_include_directories(newuoa
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
-# adding header sources just helps IDEs
-target_sources(newuoa INTERFACE
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>$<INSTALL_INTERFACE:include>/newuoa.h
-)
-
-set_target_properties(newuoa PROPERTIES PUBLIC_HEADER include/newuoa.h)
-
 # Install rules
 install(TARGETS newuoa
 	EXPORT newuoaTargets
@@ -44,18 +37,14 @@ install(EXPORT newuoaTargets
 )
 
 install(
-	DIRECTORY include
+	FILES ${PROJECT_SOURCE_DIR}/include/newuoa.h
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	COMPONENT Devel
 )
 
-set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR} )
-set(LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR} )
-
 configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/Config.cmake.in
 	${CMAKE_CURRENT_BINARY_DIR}/newuoa/newuoaConfig.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/newuoa
-	PATH_VARS INCLUDE_INSTALL_DIR LIBRARY_INSTALL_DIR
 )
 
 install(FILES
@@ -82,7 +71,6 @@ write_basic_package_version_file(
 )
 
 # pkgconfig support
-
 configure_file(${PROJECT_SOURCE_DIR}/cmake/newuoa.pc.in
 	${CMAKE_CURRENT_BINARY_DIR}/newuoa.pc.in @ONLY)
 file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/newuoa.pc
