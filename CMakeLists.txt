@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(newuoa VERSION 0.1.1 DESCRIPTION "C++ implementation of NEWUOA algorithm with C interface")
+project(newuoa VERSION 0.1.2 DESCRIPTION "C++ implementation of NEWUOA algorithm with C interface")
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
